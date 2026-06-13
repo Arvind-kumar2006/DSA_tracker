@@ -9,4 +9,4 @@ export async function updateSettings(data) {
     method: 'PUT',
     body: JSON.stringify(data),
   });
-}
+} 
