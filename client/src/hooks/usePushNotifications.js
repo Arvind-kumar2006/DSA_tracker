@@ -22,7 +22,7 @@ export function usePushNotifications({ enabled, dueCount, settingsLoaded }) {
 
       new Notification('DSA Revision Tracker', {
         body: `${dueCount} question${dueCount > 1 ? 's' : ''} due for revision today`,
-        icon: '/vite.svg',
+        icon: '/favicon.svg',
       });
       localStorage.setItem('lastDueNotification', today);
     };

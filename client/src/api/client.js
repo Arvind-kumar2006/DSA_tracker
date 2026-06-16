@@ -12,6 +12,8 @@ export function clearToken() {
   localStorage.removeItem(TOKEN_KEY);
 }
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 export async function apiFetch(path, options = {}) {
   const token = getToken();
   const headers = {
@@ -20,7 +22,7 @@ export async function apiFetch(path, options = {}) {
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const res = await fetch(path, { ...options, headers });
+  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) {
