@@ -7,6 +7,8 @@ const emptyForm = {
   problemUrl: '',
   platform: '',
   tags: [],
+  solveStatus: 'Solved Alone',
+  keyInsight: '',
   approach: '',
   timeComplexity: '',
   confidenceLevel: 3,
@@ -16,7 +18,7 @@ const emptyForm = {
   customReminderDate: '',
 };
 
-export default function QuestionForm({ onSubmit, editing, onCancel, platforms, tags }) {
+export default function QuestionForm({ onSubmit, editing, onCancel, platforms, tags, solveStatuses }) {
   const [form, setForm] = useState(emptyForm);
   const [tagInput, setTagInput] = useState('');
   const [showPreview, setShowPreview] = useState(false);
@@ -34,6 +36,8 @@ export default function QuestionForm({ onSubmit, editing, onCancel, platforms, t
         problemUrl: editing.problemUrl || '',
         platform: editing.platform,
         tags: editing.tags || [],
+        solveStatus: editing.solveStatus || 'Solved Alone',
+        keyInsight: editing.keyInsight || '',
         approach: editing.approach || '',
         timeComplexity: editing.timeComplexity || '',
         confidenceLevel: editing.confidenceLevel,
@@ -124,6 +128,14 @@ export default function QuestionForm({ onSubmit, editing, onCancel, platforms, t
               <input type="text" name="timeComplexity" value={form.timeComplexity} onChange={handleChange} placeholder="e.g. O(n log n)" className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" />
             </div>
             <div>
+              <label className="block text-sm font-medium mb-1.5">Solve Status</label>
+              <select name="solveStatus" value={form.solveStatus} onChange={handleChange} className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
+                {(solveStatuses || ['Solved Alone', 'Solved With Hint', 'Solved After Solution']).map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </div>
+            <div>
               <label className="block text-sm font-medium mb-1.5">Confidence Level</label>
               <select name="confidenceLevel" value={form.confidenceLevel} onChange={handleChange} className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
                 {[1, 2, 3, 4, 5].map((n) => <option key={n} value={n}>{n} — {n <= 2 ? 'Weak' : n === 3 ? 'Medium' : 'Strong'}</option>)}
@@ -141,6 +153,18 @@ export default function QuestionForm({ onSubmit, editing, onCancel, platforms, t
               <label className="block text-sm font-medium mb-1.5">Remind Me On (override)</label>
               <input type="date" name="customReminderDate" value={form.customReminderDate} onChange={handleChange} className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1.5">Key Insight</label>
+            <input
+              type="text"
+              name="keyInsight"
+              value={form.keyInsight}
+              onChange={handleChange}
+              placeholder="e.g. Use hash map to track complements in one pass"
+              className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 outline-none"
+            />
           </div>
 
           <div>

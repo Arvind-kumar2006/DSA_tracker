@@ -41,6 +41,7 @@ export default function MistakeModal({ question, repeatedPatterns, onClose }) {
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div><span className="text-slate-500">Platform</span><p className="font-medium">{question.platform}</p></div>
             <div><span className="text-slate-500">Confidence</span><p className="font-medium">{question.confidenceLevel} — {getConfidenceLabel(question.confidenceLevel)}</p></div>
+            <div><span className="text-slate-500">Solve Status</span><p className="font-medium">{question.solveStatus || '—'}</p></div>
             <div className="col-span-2">
               <span className="text-slate-500">Tags</span>
               <div className="flex flex-wrap gap-1.5 mt-1">
@@ -50,6 +51,15 @@ export default function MistakeModal({ question, repeatedPatterns, onClose }) {
               </div>
             </div>
           </div>
+
+          {question.keyInsight && (
+            <div>
+              <h4 className="text-sm font-semibold mb-2">Key Insight</h4>
+              <p className="text-sm bg-violet-50 dark:bg-violet-950/30 border border-violet-200 dark:border-violet-800 rounded-lg p-3 text-violet-900 dark:text-violet-200">
+                {question.keyInsight}
+              </p>
+            </div>
+          )}
 
           {question.approach && (
             <div>

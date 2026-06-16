@@ -319,6 +319,7 @@ export default function TrackerApp() {
           onCancel={() => { setEditing(null); setShowForm(false); }}
           platforms={settings.platforms}
           tags={settings.tags}
+          solveStatuses={settings.solveStatuses}
         />
       )}
 

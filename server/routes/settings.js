@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import UserSettings, { DEFAULT_INTERVALS } from '../models/UserSettings.js';
 import { authMiddleware } from '../middleware/auth.js';
-import { PLATFORMS } from '../models/Question.js';
+import { PLATFORMS, SOLVE_STATUSES } from '../models/Question.js';
 import { getUserTags } from '../services/statsService.js';
 
 const router = Router();
@@ -19,6 +19,7 @@ router.get('/', async (req, res) => {
       weeklyEmailEnabled: settings.weeklyEmailEnabled,
       pushNotificationsEnabled: settings.pushNotificationsEnabled,
       platforms: PLATFORMS,
+      solveStatuses: SOLVE_STATUSES,
       tags,
       defaultIntervals: DEFAULT_INTERVALS,
     });
@@ -58,6 +59,7 @@ router.put('/', async (req, res) => {
       weeklyEmailEnabled: settings.weeklyEmailEnabled,
       pushNotificationsEnabled: settings.pushNotificationsEnabled,
       platforms: PLATFORMS,
+      solveStatuses: SOLVE_STATUSES,
       tags,
       defaultIntervals: DEFAULT_INTERVALS,
     });

@@ -3,6 +3,12 @@ import { DEFAULT_INTERVALS } from './UserSettings.js';
 
 export const PLATFORMS = ['LeetCode', 'GFG', 'Codeforces', 'Other'];
 
+export const SOLVE_STATUSES = [
+  'Solved Alone',
+  'Solved With Hint',
+  'Solved After Solution',
+];
+
 const questionSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true },
@@ -10,6 +16,12 @@ const questionSchema = new mongoose.Schema(
     problemUrl: { type: String, default: '', trim: true },
     platform: { type: String, required: true, enum: PLATFORMS },
     tags: [{ type: String, trim: true }],
+    solveStatus: {
+      type: String,
+      enum: SOLVE_STATUSES,
+      default: 'Solved Alone',
+    },
+    keyInsight: { type: String, default: '', trim: true },
     approach: { type: String, default: '' },
     timeComplexity: { type: String, default: '' },
     confidenceLevel: { type: Number, required: true, min: 1, max: 5 },

@@ -1,4 +1,5 @@
 import Question from '../models/Question.js';
+import User from '../models/User.js';
 import UserSettings from '../models/UserSettings.js';
 import SentAlert from '../models/SentAlert.js';
 import { isDueForRevision, startOfDay } from '../utils/revision.js';
@@ -9,7 +10,7 @@ export async function findDueQuestions(userId, intervals) {
   return questions.filter((q) => isDueForRevision(q, intervals));
 }
 
-export async function findUnsentDueQuestions(userId, intervals) {
+async function findUnsentDueQuestions(userId, intervals) {
   const due = await findDueQuestions(userId, intervals);
   const today = startOfDay();
   const unsent = [];
@@ -35,49 +36,42 @@ function areAlertsEnabled() {
   return process.env.ALERTS_ENABLED !== 'false';
 }
 
-export async function processRevisionAlerts({ force = false, userId } = {}) {
+export async function processRevisionAlerts({ force = false } = {}) {
   if (!isEmailConfigured()) {
     return { sent: false, reason: 'SMTP not configured', count: 0 };
   }
   if (!areAlertsEnabled()) {
-    return { sent: false, reason: 'Alerts disabled', count: 0 };
+    return { sent: false, reason: 'Alerts disabled (ALERTS_ENABLED=false)', count: 0 };
   }
 
   const recipient = getRecipientEmail();
   if (!recipient) {
-    return { sent: false, reason: 'No recipient email configured', count: 0 };
+    return { sent: false, reason: 'No recipient email in DEFAULT_ALERT_EMAIL', count: 0 };
   }
 
-  const settings = userId
-    ? await UserSettings.getForUser(userId)
-    : null;
-  const intervals = settings?.getIntervalsObject() || undefined;
+  const users = await User.find();
+  const allDue = [];
 
-  const query = userId ? { user: userId } : {};
-  const allQuestions = await Question.find(query);
-  const userIntervals = intervals || { 1: 2, 2: 3, 3: 5, 4: 7, 5: 10 };
-
-  const due = allQuestions.filter((q) => isDueForRevision(q, userIntervals));
-  let questions = due;
-
-  if (!force) {
-    const today = startOfDay();
-    const unsent = [];
-    for (const q of due) {
-      const alreadySent = await SentAlert.findOne({ questionId: q._id, alertDate: today });
-      if (!alreadySent) unsent.push(q);
-    }
-    questions = unsent;
+  for (const user of users) {
+    const settings = await UserSettings.getForUser(user._id);
+    const intervals = settings.getIntervalsObject();
+    const due = force
+      ? await findDueQuestions(user._id, intervals)
+      : await findUnsentDueQuestions(user._id, intervals);
+    allDue.push(...due);
   }
 
-  if (questions.length === 0) {
-    return { sent: false, reason: 'No due questions', count: 0 };
+  if (allDue.length === 0) {
+    return { sent: false, reason: 'No due questions today', count: 0, recipient };
   }
 
-  await sendRevisionDigest(recipient, questions, userIntervals);
-  if (!force) await markAlertsSent(questions);
+  const defaultIntervals = (await UserSettings.getForUser(users[0]?._id))?.getIntervalsObject()
+    || { 1: 2, 2: 3, 3: 5, 4: 7, 5: 10 };
 
-  return { sent: true, count: questions.length, recipient };
+  await sendRevisionDigest(recipient, allDue, defaultIntervals);
+  if (!force) await markAlertsSent(allDue);
+
+  return { sent: true, count: allDue.length, recipient };
 }
 
 export async function processWeeklySummaries() {

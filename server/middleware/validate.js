@@ -1,4 +1,4 @@
-import { PLATFORMS } from '../models/Question.js';
+import { PLATFORMS, SOLVE_STATUSES } from '../models/Question.js';
 
 export function validateQuestionBody(req, res, next) {
   const body = req.body;
@@ -9,6 +9,9 @@ export function validateQuestionBody(req, res, next) {
   }
   if (body.platform !== undefined && !PLATFORMS.includes(body.platform)) {
     errors.push(`Platform must be one of: ${PLATFORMS.join(', ')}`);
+  }
+  if (body.solveStatus !== undefined && !SOLVE_STATUSES.includes(body.solveStatus)) {
+    errors.push(`Solve status must be one of: ${SOLVE_STATUSES.join(', ')}`);
   }
   if (body.confidenceLevel !== undefined) {
     const level = Number(body.confidenceLevel);

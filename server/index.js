@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit';
 import questionRoutes from './routes/questions.js';
 import authRoutes from './routes/auth.js';
 import settingsRoutes from './routes/settings.js';
+import emailRoutes from './routes/email.js';
 import { startRevisionCron } from './jobs/revisionCron.js';
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.use('/api', limiter);
 app.use('/api/auth', authRoutes);
 app.use('/api/questions', questionRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/email', emailRoutes);
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' });
