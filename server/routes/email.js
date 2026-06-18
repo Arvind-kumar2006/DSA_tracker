@@ -69,4 +69,13 @@ router.post('/send-now', async (req, res) => {
   }
 });
 
+router.get('/send-now', async (req, res) => {
+  try {
+    const result = await processRevisionAlerts({ force: false });
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;
